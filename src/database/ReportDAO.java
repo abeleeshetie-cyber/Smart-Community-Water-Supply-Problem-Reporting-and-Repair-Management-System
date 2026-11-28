@@ -17,7 +17,8 @@ import java.util.List;
 public class ReportDAO {
 
     public void saveReport(ProblemReport report) throws SQLException {
-        String sql = "INSERT INTO reports(id,resident_id,location,type,severity,households,reported_at,status,priority) VALUES(?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO reports(id,resident_id,location,type,severity,households,"
+                + "reported_at,status,priority) VALUES(?,?,?,?,?,?,?,?,?)";
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
             try {
@@ -43,7 +44,8 @@ public class ReportDAO {
     }
 
     public void updateReport(ProblemReport report) throws SQLException {
-        String sql = "UPDATE reports SET location = ?, type = ?, severity = ?, households = ?, status = ?, priority = ? WHERE id = ?";
+        String sql = "UPDATE reports SET location = ?, type = ?, severity = ?, households = ?, "
+                + "status = ?, priority = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
             try {
@@ -98,6 +100,7 @@ public class ReportDAO {
         if (assignment == null) {
             return;
         }
+
         String assignmentSql = "INSERT INTO assignments(report_id,worker_id,assigned_at) VALUES(?,?,?)";
         try (PreparedStatement statement = connection.prepareStatement(assignmentSql)) {
             statement.setInt(1, report.getReportId());
@@ -105,6 +108,7 @@ public class ReportDAO {
             statement.setString(3, assignment.getAssignedAt().toString());
             statement.executeUpdate();
         }
+
         String recordSql = "INSERT INTO records(report_id,note,date) VALUES(?,?,?)";
         for (MaintenanceRecord record : assignment.getRecords()) {
             try (PreparedStatement statement = connection.prepareStatement(recordSql)) {
@@ -131,6 +135,7 @@ public class ReportDAO {
 
     private void loadAssignment(Connection connection, ProblemReport report) throws SQLException {
         RepairAssignment assignment = null;
+
         try (PreparedStatement statement = connection.prepareStatement(
                 "SELECT worker_id, assigned_at FROM assignments WHERE report_id = ?")) {
             statement.setInt(1, report.getReportId());
@@ -142,9 +147,11 @@ public class ReportDAO {
                 }
             }
         }
+
         if (assignment == null) {
             return;
         }
+
         try (PreparedStatement statement = connection.prepareStatement(
                 "SELECT note, date FROM records WHERE report_id = ? ORDER BY rowid")) {
             statement.setInt(1, report.getReportId());
@@ -156,6 +163,7 @@ public class ReportDAO {
                 }
             }
         }
+
         report.setAssignment(assignment);
     }
 }
