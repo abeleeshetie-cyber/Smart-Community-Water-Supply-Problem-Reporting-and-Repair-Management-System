@@ -16,9 +16,11 @@ import java.util.List;
 public class UserDAO {
 
     public void saveUser(User user) throws SQLException {
-        String sql = "INSERT INTO users(id,name,phone,password,role,trade,available,address) VALUES(?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO users(id,name,phone,password,role,trade,available,address) "
+                + "VALUES(?,?,?,?,?,?,?,?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setString(1, user.getId());
             statement.setString(2, user.getName());
             statement.setString(3, user.getPhoneNumber());
@@ -52,6 +54,7 @@ public class UserDAO {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
+
             while (resultSet.next()) {
                 String id = resultSet.getString("id");
                 String name = resultSet.getString("name");
