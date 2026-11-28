@@ -12,17 +12,28 @@ public class ProblemReport {
     private LocalDateTime reportedAt;
     private Status status;
     private double priorityScore;
+    private RepairAssignment assignment;   // null until a worker is assigned
 
+    // new report: dated now, status SUBMITTED
     public ProblemReport(int reportId, String residentId, String location,
                          ProblemType type, int severity, int affectedHouseholds) {
+        this(reportId, residentId, location, type, severity, affectedHouseholds,
+             LocalDateTime.now(), Status.SUBMITTED, 0);
+    }
+
+    // used by the database layer when loading a saved report
+    public ProblemReport(int reportId, String residentId, String location,
+                         ProblemType type, int severity, int affectedHouseholds,
+                         LocalDateTime reportedAt, Status status, double priorityScore) {
         this.reportId = reportId;
         this.residentId = residentId;
         this.location = location;
         this.type = type;
         this.severity = severity;
         this.affectedHouseholds = affectedHouseholds;
-        this.reportedAt = LocalDateTime.now();
-        this.status = Status.SUBMITTED;
+        this.reportedAt = reportedAt;
+        this.status = status;
+        this.priorityScore = priorityScore;
     }
 
     public int getReportId() { return reportId; }
@@ -35,6 +46,9 @@ public class ProblemReport {
     public Status getStatus() { return status; }
     public double getPriorityScore() { return priorityScore; }
     public void setPriorityScore(double score) { this.priorityScore = score; }
+
+    public RepairAssignment getAssignment() { return assignment; }
+    public void setAssignment(RepairAssignment assignment) { this.assignment = assignment; }
 
     // The only way to change status
     public void updateStatus(Status newStatus) {
